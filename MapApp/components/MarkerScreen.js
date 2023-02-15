@@ -35,12 +35,15 @@ export default function MarkerScreen({route}) {
       db.transaction(tx =>
         tx.executeSql(
           'INSERT INTO image (marker_id, image_uri) VALUES (?, ?)',
-          [marker.marker_id, asset.uri]
+          [marker.marker_id, asset.uri],
+          () => {
+            images.push({image_uri: asset.uri});
+            setImages([...images, {image_uri: asset.uri}]);
+          }
         )
       );
-
-      setImages([...images, {image_uri: asset.uri}]);
     });
+
   };
 
   if (isLoading) {
