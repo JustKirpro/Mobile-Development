@@ -1,4 +1,3 @@
-import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {openDatabase} from "expo-sqlite";
@@ -13,19 +12,6 @@ const Stack = createNativeStackNavigator();
 const db = openDatabase('markers.db');
 
 export default function App() {
-
-  useEffect(()=> {
-      db.transaction(tx => {
-        tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS marker (marker_id INTEGER PRIMARY KEY AUTOINCREMENT, latitude REAL, longitude REAL);'
-        );
-
-        tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS image (image_id INTEGER PRIMARY KEY AUTOINCREMENT, marker_id REFERENCES marker(marker_id),image_uri TEXT);'
-        );
-      });
-  }, []);
-
   return (
     <NavigationContainer>
       <Stack.Navigator>
