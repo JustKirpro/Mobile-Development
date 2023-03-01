@@ -6,20 +6,16 @@ import LoadingScreen from "./LoadingScreen";
 import Button from "./Button";
 import ImagesList from "./ImagesList";
 
+import fetchImages from "../database/fetchImages";
+import insertImages from "../database/insertImages";
+
 export default function MarkerScreen({route}) {
   const {db, marker} = route.params;
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    db.transaction(tx =>
-      tx.executeSql(
-        'SELECT image_uri FROM image WHERE marker_id = ?',
-        [marker.marker_id],
-        (_, resultSet) => setImages(resultSet.rows._array)
-      )
-    );
-
+    fetchImages(db, marker, setImages);
     setIsLoading(false);
   }, []);
 
@@ -31,18 +27,7 @@ export default function MarkerScreen({route}) {
       return;
     }
 
-    result.assets.map(asset => {
-      db.transaction(tx =>
-        tx.executeSql(
-          'INSERT INTO image (marker_id, image_uri) VALUES (?, ?)',
-          [marker.marker_id, asset.uri],
-          () => {
-            images.push({image_uri: asset.uri});
-            setImages([...images, {image_uri: asset.uri}]);
-          }
-        )
-      );
-    });
+    insertImages(db, result, marker, images, setImages);
   };
 
   if (isLoading) {
@@ -55,7 +40,7 @@ export default function MarkerScreen({route}) {
       <ImagesList images={images}/>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
