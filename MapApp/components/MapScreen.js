@@ -40,12 +40,6 @@ export default function MapScreen({route, navigation}) {
         return;
       }
 
-      const backgroundStatus = await Location.requestBackgroundPermissionsAsync();
-
-      if (!backgroundStatus.granted) {
-        alert('Permission to access location in background was denied');
-      }
-
       await Location.watchPositionAsync({
         accuracy: Location.Accuracy.Highest,
         distanceInterval: 10
